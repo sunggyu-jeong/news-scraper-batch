@@ -56,7 +56,7 @@ class BatchScheduler(
                     |항상 건강하고 좋은 하루 보내세요!
                     |
                     |감사합니다.
-                """.trimMargin(),
+                    |""".trimMargin(),
                 attachmentFilename = "${endDate} news.xlsx",
                 attachmentData = excelBytes
             )
