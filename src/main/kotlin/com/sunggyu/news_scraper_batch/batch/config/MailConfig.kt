@@ -11,11 +11,6 @@ class MailConfig {
     @Bean
     fun javaMailSender(): JavaMailSender {
         val mailSender = JavaMailSenderImpl()
-        //FIXME: - host 확인해서 수정
-        mailSender.host = "smtp.gmail.com"
-        mailSender.port = 587
-        mailSender.username = "sunggyu"
-        mailSender.password = "123456"
 
         val props: Properties = mailSender.javaMailProperties
         props["mail.smtp.auth"] = "true"
