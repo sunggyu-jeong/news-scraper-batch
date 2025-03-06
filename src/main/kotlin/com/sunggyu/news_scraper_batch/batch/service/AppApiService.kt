@@ -9,6 +9,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
+import retrofit2.Call
 
 @Service
 class AppApiService(
@@ -18,7 +19,7 @@ class AppApiService(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ApiService::class.java)
 
-    suspend fun getNews(queries: String,startDate: String, endDate: String): ApiResponse<List<NewsResponse>> {
+    fun getNews(queries: String,startDate: String, endDate: String): Call<ApiResponse<List<NewsResponse>>> {
         try {
             return apiService.getNewsList(queries, startDate, endDate)
         } catch (e: Exception) {
@@ -27,7 +28,7 @@ class AppApiService(
         }
     }
 
-    suspend fun requestLogin(): ApiResponse<LoginResponse> {
+    fun requestLogin(): Call<ApiResponse<LoginResponse>> {
         try {
             val request = LoginRequest(username, password)
             return apiService.requestLogin(request)
@@ -37,7 +38,7 @@ class AppApiService(
         }
     }
 
-    suspend fun getKeywordList(): ApiResponse<List<KeywordResponse>> {
+    fun getKeywordList(): Call<ApiResponse<List<KeywordResponse>>> {
         try {
             return apiService.getKeywordList()
         } catch (e: Exception) {
