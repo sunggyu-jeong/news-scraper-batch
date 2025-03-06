@@ -1,0 +1,33 @@
+package com.sunggyu.news_scraper_batch.batch
+
+import org.springframework.batch.core.BatchStatus
+import org.springframework.batch.core.StepExecution
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+
+fun <T> runWithRetry(
+    stepExecution: StepExecution,
+    maxRetries: Int = 3,
+    delayMillis: Long = 2000L,
+    block: () -> T): T? {
+    var attempt = 0
+    while (attempt < maxRetries) {
+        attempt++
+        try {
+            return block()
+        } catch(e: Exception) {
+            println("요청 실패 (시도 횟수: $attempt")
+            if (attempt == maxRetries) {
+                stepExecution.status = BatchStatus.FAILED
+                stepExecution.exitStatus = org.springframework.batch.core.ExitStatus.FAILED
+                return null
+            }
+            Thread.sleep(delayMillis)
+        }
+    }
+    return null
+}
+
+fun getPastDate(daysAgo: Long = 1): String {
+    return LocalDateTime.now().minusDays(daysAgo).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+}

@@ -4,5 +4,5 @@ data class ApiResponse<T>(
     val status: Int,
     val message: String,
     val messageDev: String,
-    val data: T
+    val data: T?
 )
