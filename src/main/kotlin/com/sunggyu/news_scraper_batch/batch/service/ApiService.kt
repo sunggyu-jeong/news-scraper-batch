@@ -5,6 +5,7 @@ import com.sunggyu.news_scraper_batch.batch.domain.request.LoginRequest
 import com.sunggyu.news_scraper_batch.batch.domain.response.KeywordResponse
 import com.sunggyu.news_scraper_batch.batch.domain.response.LoginResponse
 import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResponse
+import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
@@ -12,11 +13,11 @@ import retrofit2.http.Query
 
 interface ApiService {
     @POST("api/user/login")
-    suspend fun requestLogin(@Body request: LoginRequest): ApiResponse<LoginResponse>
+    fun requestLogin(@Body request: LoginRequest): Call<ApiResponse<LoginResponse>>
 
     @GET("api/keywords")
-    suspend fun getKeywordList(): ApiResponse<List<KeywordResponse>>
+    fun getKeywordList(): Call<ApiResponse<List<KeywordResponse>>>
 
     @GET("api/news")
-    suspend fun getNewsList(@Query("queries") queries: String, @Query("startDate") startDate: String, @Query("endDate") endDate: String): ApiResponse<List<NewsResponse>>
+    fun getNewsList(@Query("queries") queries: String, @Query("startDate") startDate: String, @Query("endDate") endDate: String): Call<ApiResponse<List<NewsResponse>>>
 }
