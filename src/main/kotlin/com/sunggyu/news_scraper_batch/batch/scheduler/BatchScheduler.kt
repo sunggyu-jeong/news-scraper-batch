@@ -18,13 +18,12 @@ class BatchScheduler(
     private val emailService: EmailService
 ) {
     private val logger: Logger = LoggerFactory.getLogger(BatchScheduler::class.java)
-
+    //    @Scheduled(cron = "0 0 9 ? * MON-FRI")
     @Scheduled(cron = "0 */5 * * * ?")
     fun runBatchJob() = runBlocking {
         execute()
     }
 
-//    @Scheduled(cron = "0 0 9 ? * MON-FRI")
     suspend fun execute() {
         try {
             // 1. 로그인 요청으로 엑세스 토큰 설정
