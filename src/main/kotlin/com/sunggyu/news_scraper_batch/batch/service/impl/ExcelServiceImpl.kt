@@ -82,9 +82,11 @@ class ExcelServiceImpl: ExcelService {
                 setFillForegroundColor(XSSFColor(java.awt.Color(214, 230, 245), null))
             }
         }
+        val infoCellTitle = listOf("갯수","조회기간")
         for (r in 0..1) {
             val row = sheet.getRow(r) ?: sheet.createRow(r)
             val cell = row.createCell(5)
+            cell.setCellValue(infoCellTitle[r])
             cell.cellStyle = boldStyle
         }
 
@@ -93,9 +95,11 @@ class ExcelServiceImpl: ExcelService {
             alignment = HorizontalAlignment.CENTER
             verticalAlignment = VerticalAlignment.CENTER
         }
+        val infoCellValue = listOf(newsList.size.toString(), "${startDate} ~ ${endDate}")
         for (r in 0..1) {
             val row = sheet.getRow(r) ?: sheet.createRow(r)
             val cell = row.getCell(6) ?: row.createCell(6)
+            cell.setCellValue(infoCellValue[r])
             cell.cellStyle = centerStyle
         }
 
