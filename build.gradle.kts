@@ -19,6 +19,10 @@ repositories {
 }
 
 dependencies {
+	implementation("org.postgresql:postgresql:42.7.2")
+	implementation("org.springframework.boot:spring-boot-starter-batch")
+	implementation("org.springframework.retry:spring-retry")
+	implementation("org.springframework:spring-aspects")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("org.springframework.boot:spring-boot-starter")
