@@ -1,6 +1,6 @@
 package com.sunggyu.news_scraper_batch.batch.service.impl
 
-import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResult
+import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResponse
 import com.sunggyu.news_scraper_batch.batch.service.ExcelService
 import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class ExcelServiceImpl: ExcelService {
-    override fun createExcelFile(newsList: List<NewsResult>, startDate: String, endDate: String): ByteArray {
+    override fun createExcelFile(newsList: List<NewsResponse>, startDate: String, endDate: String): ByteArray {
         val workbook = XSSFWorkbook()
         //FIXME: - 날짜 가져와서 엑셀파일에 붙여넣기
         val sheet = workbook.createSheet("news")
