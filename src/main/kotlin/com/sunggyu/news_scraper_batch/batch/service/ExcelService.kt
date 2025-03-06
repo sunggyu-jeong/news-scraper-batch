@@ -1,7 +1,7 @@
 package com.sunggyu.news_scraper_batch.batch.service
 
-import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResult
+import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResponse
 
 interface ExcelService {
-    fun createExcelFile(newsList: List<NewsResult>, startDate: String, endDate: String): ByteArray
+    fun createExcelFile(newsList: List<NewsResponse>, startDate: String, endDate: String): ByteArray
 }
