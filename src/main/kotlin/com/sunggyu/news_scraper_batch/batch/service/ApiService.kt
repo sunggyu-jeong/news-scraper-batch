@@ -15,8 +15,8 @@ interface ApiService {
     suspend fun requestLogin(@Body request: LoginRequest): ApiResponse<LoginResponse>
 
     @GET("api/keywords")
-    suspend fun getKeywordList(): ApiResponse<KeywordResponse>
+    suspend fun getKeywordList(): ApiResponse<List<KeywordResponse>>
 
     @GET("api/news")
-    suspend fun getNewsList(@Query("queries") queries: String, @Query("startDate") startDate: String, @Query("endDate") endDate: String): ApiResponse<NewsResponse>
+    suspend fun getNewsList(@Query("queries") queries: String, @Query("startDate") startDate: String, @Query("endDate") endDate: String): ApiResponse<List<NewsResponse>>
 }
