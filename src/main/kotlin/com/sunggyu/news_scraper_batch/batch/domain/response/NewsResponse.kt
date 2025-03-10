@@ -1,6 +1,6 @@
 package com.sunggyu.news_scraper_batch.batch.domain.response
 
-data class NewsResponse(
+data class NewsResponse (
     val newsType: String,
     val keyword: String,
     val source: String,
