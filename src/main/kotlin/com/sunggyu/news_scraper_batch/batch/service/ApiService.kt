@@ -9,7 +9,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface ApiService {
     @POST("api/user/login")
@@ -19,5 +19,5 @@ interface ApiService {
     fun getKeywordList(): Call<ApiResponse<List<KeywordResponse>>>
 
     @GET("api/news")
-    fun getNewsList(@Query("queries") queries: String, @Query("startDate") startDate: String, @Query("endDate") endDate: String): Call<ApiResponse<List<NewsResponse>>>
+    fun getNewsList(@QueryMap(encoded = true) options: Map<String, String>): Call<ApiResponse<List<NewsResponse>>>
 }
