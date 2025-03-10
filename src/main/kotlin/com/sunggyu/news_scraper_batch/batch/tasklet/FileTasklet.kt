@@ -11,13 +11,18 @@ import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 @Component
 @StepScope
 class FileTasklet(
     private val excelService: ExcelService,
-    private val emailService: EmailService
+    private val emailService: EmailService,
+    @Value("\${to}") private val to: String,
+    @Value("\${cc1}") private val cc: String
 ): Tasklet {
     val gson = Gson()
 
@@ -30,14 +35,15 @@ class FileTasklet(
             val restoredList: List<NewsResponse> = gson.fromJson(newsChunk, type)
 
             if (restoredList.isEmpty()) throw Error("조회된 정보가 없습니다.")
-            val startDate = getPastDate()
+            val today = LocalDate.now().dayOfWeek
+            val startDate = if (today == DayOfWeek.MONDAY) getPastDate(3) else getPastDate()
             val endDate = getPastDate(0)
 
             val excelBytes = excelService.createExcelFile(restoredList, startDate, endDate)
 
             emailService.sendEmail(
-                to = "coder3306@goodsoft.io",
-                cc = null,
+                to = to,
+                cc = arrayOf(cc),
                 subject = "[${endDate}] 최신 뉴스 공유드립니다.",
                 text = """
                     |안녕하세요,

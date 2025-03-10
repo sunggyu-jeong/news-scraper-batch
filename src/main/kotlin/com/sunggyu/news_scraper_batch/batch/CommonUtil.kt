@@ -8,7 +8,7 @@ import java.time.format.DateTimeFormatter
 fun <T> runWithRetry(
     stepExecution: StepExecution,
     maxRetries: Int = 3,
-    delayMillis: Long = 2000L,
+    delayMillis: Long = 5000L,
     block: () -> T): T? {
     var attempt = 0
     while (attempt < maxRetries) {
@@ -16,7 +16,7 @@ fun <T> runWithRetry(
         try {
             return block()
         } catch(e: Exception) {
-            println("요청 실패 (시도 횟수: $attempt")
+            println("요청 실패 (시도 횟수: $attempt) (오류 메세지: ${e.message}")
             if (attempt == maxRetries) {
                 stepExecution.status = BatchStatus.FAILED
                 stepExecution.exitStatus = org.springframework.batch.core.ExitStatus.FAILED
