@@ -2,8 +2,11 @@ package com.sunggyu.news_scraper_batch.batch
 
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.StepExecution
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.util.Date
 
 fun <T> runWithRetry(
     stepExecution: StepExecution,
@@ -30,4 +33,10 @@ fun <T> runWithRetry(
 
 fun getPastDate(daysAgo: Long = 1): String {
     return LocalDateTime.now().minusDays(daysAgo).format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+}
+
+fun convertToLocalDate(date: Date): LocalDate {
+    return date.toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate()
 }

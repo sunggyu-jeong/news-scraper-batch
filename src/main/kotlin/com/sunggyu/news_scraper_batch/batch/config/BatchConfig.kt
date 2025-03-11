@@ -1,9 +1,6 @@
 package com.sunggyu.news_scraper_batch.batch.config
 
-import com.sunggyu.news_scraper_batch.batch.tasklet.FileTasklet
-import com.sunggyu.news_scraper_batch.batch.tasklet.KeywordTasklet
-import com.sunggyu.news_scraper_batch.batch.tasklet.LoginTasklet
-import com.sunggyu.news_scraper_batch.batch.tasklet.NewsSearchTasklet
+import com.sunggyu.news_scraper_batch.batch.tasklet.*
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.job.builder.JobBuilder
@@ -21,7 +18,8 @@ class BatchConfig(
     private val loginTasklet: LoginTasklet,
     private val keywordTasklet: KeywordTasklet,
     private val newsSearchTasklet: NewsSearchTasklet,
-    private val fileTasklet: FileTasklet
+    private val fileTasklet: FileTasklet,
+    private val selectHolidayTasklet: SelectHolidayTasklet
 ) {
    @Bean
    fun loginStep(): Step {
@@ -56,10 +54,19 @@ class BatchConfig(
     }
 
     @Bean
+    fun selectHolidayStep(): Step {
+        return StepBuilder("selectHolidayStep", jobRepository)
+            .allowStartIfComplete(true)
+            .tasklet(selectHolidayTasklet, transactionManager)
+            .build()
+    }
+
+    @Bean
     fun newsBatchJob(): Job {
         return JobBuilder("newsBatchJob", jobRepository)
             .incrementer(RunIdIncrementer())
-            .start(loginStep())
+            .start(selectHolidayStep())
+            .next(loginStep())
             .next(keywordStep())
             .next(newsSearchStep())
             .next(fileStep())
