@@ -41,5 +41,7 @@
             tbl_holiday th
         WHERE
             th.locdate &lt;= NOW()
+        ORDER BY
+            th.locdate DESC
     </select>
 </mapper>
