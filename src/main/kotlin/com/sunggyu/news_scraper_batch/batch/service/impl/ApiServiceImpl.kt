@@ -2,9 +2,7 @@ package com.sunggyu.news_scraper_batch.batch.service.impl
 
 import com.sunggyu.news_scraper_batch.batch.domain.common.ApiResponse
 import com.sunggyu.news_scraper_batch.batch.domain.request.LoginRequest
-import com.sunggyu.news_scraper_batch.batch.domain.response.KeywordResponse
-import com.sunggyu.news_scraper_batch.batch.domain.response.LoginResponse
-import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResponse
+import com.sunggyu.news_scraper_batch.batch.domain.response.*
 import com.sunggyu.news_scraper_batch.batch.service.ApiService
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -49,6 +47,15 @@ class ApiServiceImpl(
             return apiService.getKeywordList()
         } catch (e: Exception) {
             logger.error("검색어 목록 조회 중 오류발생: {}", e.message, e)
+            throw Exception(e.message)
+        }
+    }
+
+    fun getAutomailUsers(): Call<ApiResponse<List<AutomailResponse>>> {
+        try {
+            return apiService.getAutomailUsers()
+        } catch (e: Exception) {
+            logger.error("유저 정보 조회 중 오류 발생: {}", e.message, e)
             throw Exception(e.message)
         }
     }

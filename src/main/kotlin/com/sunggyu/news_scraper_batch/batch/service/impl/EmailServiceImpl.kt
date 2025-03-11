@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class EmailServiceImpl(private val mailSender: JavaMailSender): EmailService {
-    override fun sendEmail(to: String, cc: Array<String>?, subject: String, text: String, attachmentFilename: String, attachmentData: ByteArray) {
+    override fun sendEmail(to: Array<String>?, cc: Array<String>?, subject: String, text: String, attachmentFilename: String, attachmentData: ByteArray) {
         val message = mailSender.createMimeMessage()
         val helper = MimeMessageHelper(message, true)
-
-        helper.setTo(to)
-        if(!cc.isNullOrEmpty()) {
+        to?.let {
+            helper.setTo(it)
+        }
+        cc?.let {
             helper.setCc(cc)
         }
         helper.setSubject(subject)
