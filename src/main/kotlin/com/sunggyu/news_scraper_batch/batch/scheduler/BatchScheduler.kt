@@ -21,19 +21,15 @@ class BatchScheduler(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(BatchScheduler::class.java)
 
-    private suspend fun executeJob(jobName: String, job: Job, startMessage: String, endMessage: String) {
+    suspend fun executeJob(jobName: String, job: Job, startMessage: String, endMessage: String) {
         val runningExecutions = jobOperator.getRunningExecutions(jobName)
         if (runningExecutions.isNotEmpty()) {
             runningExecutions.forEach { executionId ->
                 try {
-                    jobOperator.stop(executionId)
+                    jobOperator.abandon(executionId)
+                    logger.info("배치 JOB 강제종료")
                 } catch (e: Exception) {
-                    try {
-                        jobOperator.abandon(executionId)
-                        logger.info("배치 JOB 강제종료")
-                    } catch (ex: Exception) {
-                        logger.error("배치 JOB 강제종료 실패 ${ex.message}")
-                    }
+                    logger.error("배치 JOB 강제종료 실패 ${e.message}")
                 }
             }
             withContext(Dispatchers.IO) {
@@ -45,8 +41,7 @@ class BatchScheduler(
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $endMessage: ${LocalDateTime.now()}")
     }
 
-//    @Scheduled(cron = "0 30 9 ? * MON-FRI")
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 30 9 ? * MON-FRI")
     fun runBatchJob() = runBlocking {
         executeJob("newsBatchJob", newsBatchJob, "뉴스 배치 실행 시작", "뉴스 배치 실행 완료")
     }
