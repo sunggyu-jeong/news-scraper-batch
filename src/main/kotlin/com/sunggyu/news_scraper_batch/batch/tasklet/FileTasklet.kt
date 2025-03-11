@@ -7,6 +7,7 @@ import com.sunggyu.news_scraper_batch.batch.getPastDate
 import com.sunggyu.news_scraper_batch.batch.runWithRetry
 import com.sunggyu.news_scraper_batch.batch.service.EmailService
 import com.sunggyu.news_scraper_batch.batch.service.ExcelService
+import com.sunggyu.news_scraper_batch.batch.service.impl.ApiServiceImpl
 import org.springframework.batch.core.StepContribution
 import org.springframework.batch.core.configuration.annotation.StepScope
 import org.springframework.batch.core.scope.context.ChunkContext
@@ -22,8 +23,7 @@ import java.time.format.DateTimeFormatter
 class FileTasklet(
     private val excelService: ExcelService,
     private val emailService: EmailService,
-    @Value("\${to}") private val to: String,
-    @Value("\${cc1}") private val cc: String
+    private val apiServiceImpl: ApiServiceImpl
 ): Tasklet {
     val gson = Gson()
 
@@ -41,12 +41,24 @@ class FileTasklet(
 
             val excelBytes = excelService.createExcelFile(restoredList, consecutiveHolidays.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), endDate)
 
+            val automailUsers = apiServiceImpl.getAutomailUsers()
+                                                .execute()
+                                                .body()?.data
+            val toUsers = automailUsers
+                            ?.filter { it.recipientType == "TO" }
+                            ?.map { it.email }
+                            ?.toTypedArray()
+            val ccUsers = automailUsers
+                            ?.filter { it.recipientType == "CC" }
+                            ?.map { it.email }
+                            ?.toTypedArray()
+
             emailService.sendEmail(
-                to = to,
-                cc = arrayOf(cc),
+                to = toUsers,
+                cc = ccUsers,
                 subject = "[${endDate}] 최신 뉴스 공유드립니다.",
                 text = """
-                    |안녕하세요,
+                    |안녕하세요.
                     |${endDate}의 최신 뉴스를 정리하여 첨부해드립니다.
                     |유용한 정보가 되길 바라며, 궁금한 사항이 있으시면 언제든지 문의 주세요.
                     |
