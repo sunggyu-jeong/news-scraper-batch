@@ -7,4 +7,5 @@ import org.apache.ibatis.annotations.Mapper
 interface HolidayMapper {
     fun truncateHolidays()
     fun addHolidays(items: List<HolidayDomain>)
+    fun selectHolidays(): List<HolidayDomain>
 }
