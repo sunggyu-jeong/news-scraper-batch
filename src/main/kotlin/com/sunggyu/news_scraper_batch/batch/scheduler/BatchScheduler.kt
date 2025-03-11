@@ -45,7 +45,8 @@ class BatchScheduler(
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $endMessage: ${LocalDateTime.now()}")
     }
 
-    @Scheduled(cron = "0 30 9 ? * MON-FRI")
+//    @Scheduled(cron = "0 30 9 ? * MON-FRI")
+    @Scheduled(cron = "0 * * * * *")
     fun runBatchJob() = runBlocking {
         executeJob("newsBatchJob", newsBatchJob, "뉴스 배치 실행 시작", "뉴스 배치 실행 완료")
     }
