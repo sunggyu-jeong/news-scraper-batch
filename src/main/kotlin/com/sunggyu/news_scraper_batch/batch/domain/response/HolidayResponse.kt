@@ -1,8 +1,7 @@
 package com.sunggyu.news_scraper_batch.batch.domain.response
 
-import java.math.BigInteger
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
 
 data class PublicApiResponse (
     val response: PublicResponseBody
@@ -21,7 +20,6 @@ data class HolidayItems (
 )
 
 data class HolidayResponse (
-    val dateKind: String,
     val dateName: String,
     val isHoliday: String,
     val locdate: Long,
@@ -29,7 +27,6 @@ data class HolidayResponse (
 )
 
 data class HolidayDomain (
-    val dateKind: String,
     val dateName: String,
     val isHoliday: String,
     val locdate: Date,
@@ -39,9 +36,9 @@ data class HolidayDomain (
 fun PublicApiResponse.toDomain(): List<HolidayDomain> {
     val formatter = SimpleDateFormat("yyyyMMdd")
     return this.response.body.items.item.map { el ->
+        formatter.timeZone = TimeZone.getTimeZone("Asia/Seoul")
         val date = formatter.parse(el.locdate.toString())
         HolidayDomain(
-            dateKind = el.dateKind,
             dateName = el.dateName,
             isHoliday = el.isHoliday,
             locdate = date,
