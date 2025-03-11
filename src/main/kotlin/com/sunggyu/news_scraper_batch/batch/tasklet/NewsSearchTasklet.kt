@@ -10,8 +10,8 @@ import org.springframework.batch.core.scope.context.ChunkContext
 import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.stereotype.Component
-import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Component
 @StepScope
@@ -23,11 +23,12 @@ class NewsSearchTasklet(
 
         runWithRetry(contribution.stepExecution) {
             val queries = jobExecutionContext.get("queries") as String
-            val today = LocalDate.now().dayOfWeek
-            val startDate = if (today == DayOfWeek.MONDAY) getPastDate(3) else getPastDate()
+            val consecutiveHolidays = jobExecutionContext.get("consecutiveHolidays") as LocalDate
             val endDate = getPastDate(0)
             val newsList = apiServiceImpl
-                            .getNews(queries, startDate, endDate)
+                            .getNews(queries,
+                                     consecutiveHolidays.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                                     endDate)
                             .execute()
                             .body()
             val jsonString = Gson().toJson(newsList?.data)

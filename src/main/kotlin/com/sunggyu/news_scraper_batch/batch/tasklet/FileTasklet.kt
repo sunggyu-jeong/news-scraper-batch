@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sunggyu.news_scraper_batch.batch.domain.response.NewsResponse
 import com.sunggyu.news_scraper_batch.batch.getPastDate
+import com.sunggyu.news_scraper_batch.batch.runWithRetry
 import com.sunggyu.news_scraper_batch.batch.service.EmailService
 import com.sunggyu.news_scraper_batch.batch.service.ExcelService
 import org.springframework.batch.core.StepContribution
@@ -13,8 +14,8 @@ import org.springframework.batch.core.step.tasklet.Tasklet
 import org.springframework.batch.repeat.RepeatStatus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
-import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @Component
 @StepScope
@@ -29,17 +30,16 @@ class FileTasklet(
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         val jobExecutionContext = chunkContext.stepContext.stepExecution.jobExecution.executionContext
 
-        try {
+        runWithRetry(contribution.stepExecution) {
             val newsChunk = jobExecutionContext.get("newsList") as String
+            val consecutiveHolidays = jobExecutionContext.get("consecutiveHolidays") as LocalDate
             val type = object : TypeToken<List<NewsResponse>>() {}.type
             val restoredList: List<NewsResponse> = gson.fromJson(newsChunk, type)
 
             if (restoredList.isEmpty()) throw Error("조회된 정보가 없습니다.")
-            val today = LocalDate.now().dayOfWeek
-            val startDate = if (today == DayOfWeek.MONDAY) getPastDate(3) else getPastDate()
             val endDate = getPastDate(0)
 
-            val excelBytes = excelService.createExcelFile(restoredList, startDate, endDate)
+            val excelBytes = excelService.createExcelFile(restoredList, consecutiveHolidays.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")), endDate)
 
             emailService.sendEmail(
                 to = to,
@@ -57,9 +57,6 @@ class FileTasklet(
                 attachmentFilename = "${endDate} news.xlsx",
                 attachmentData = excelBytes
             )
-        } catch(e: Exception) {
-            println("엑셀 데이터 생성 또는 이메일 전송 실패 $e")
-            throw RuntimeException("엑셀 데이터 생성 또는 이메일 전송 실패 $e")
         }
         return RepeatStatus.FINISHED
     }
