@@ -42,7 +42,7 @@ class SelectHolidayTasklet(
 
     fun getPreviousBusinessDay(date: LocalDate, holidays: Set<LocalDate>): LocalDate {
         var previous = date.minusDays(1)
-        // 주말이거나, 공휴일일 경우 조회히자 않는다.
+        // 주말이거나, 공휴일일 경우 조회하지 않는다.
         while (previous.dayOfWeek == DayOfWeek.SATURDAY ||
             previous.dayOfWeek == DayOfWeek.SUNDAY ||
             holidays.contains(previous)) {
