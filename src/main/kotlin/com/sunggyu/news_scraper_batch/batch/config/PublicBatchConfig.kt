@@ -37,7 +37,7 @@ class PublicBatchConfig(
 
     @Bean
     fun publicBatchJob(): Job {
-        return JobBuilder("publicBatchStep", jobRepository)
+        return JobBuilder("publicBatchJob", jobRepository)
             .incrementer(RunIdIncrementer())
             .start(truncateHolidayStep())
             .next(fetchHolidayStep())
