@@ -1,5 +1,7 @@
 package com.sunggyu.news_scraper_batch.api
 
+import com.sunggyu.news_scraper_batch.api.domain.request.JobRequest
+import com.sunggyu.news_scraper_batch.batch.domain.common.ApiResponse
 import com.sunggyu.news_scraper_batch.batch.scheduler.BatchScheduler
 import kotlinx.coroutines.runBlocking
 import org.springframework.batch.core.Job
@@ -22,14 +24,17 @@ class BatchJobController(
     }
 
     @PostMapping("/manual/run")
-    fun runManualJob(@RequestBody jobName: String): ResponseEntity<String> {
-        val validJob = BatchJobName.entries.find { it.value == jobName } ?: throw IllegalArgumentException("유효하지 않은 접근입니다.: $jobName")
+    fun runManualJob(@RequestBody request: JobRequest): ResponseEntity<ApiResponse<String>> {
+        val validJob = BatchJobName
+                        .entries
+                        .find { it.value == request.jobName } ?: throw IllegalArgumentException("유효하지 않은 접근입니다.: ${request.jobName}")
         runBlocking {
             when (validJob) {
                 BatchJobName.NewsBatchJob -> batchScheduler.executeJob("newsBatchJob", newsBatchJob, "뉴스 배치 실행 시작", "뉴스 배치 실행 완료")
                 BatchJobName.PublicBatchJob -> batchScheduler.executeJob("publicBatchJob", publicBatchJob, "공공API 배치 실행 시작", "공공API 배치 실행 완료")
             }
         }
-        return ResponseEntity.ok("배치 수동실행이 완료되었습니다. 요청하신 배치 명 >> $jobName")
+        val response = ResponseEntity.ok(ApiResponse(200, "배치 수동실행 요청이 완료되었습니다.", "요청 성공" , request.jobName))
+        return response
     }
 }
