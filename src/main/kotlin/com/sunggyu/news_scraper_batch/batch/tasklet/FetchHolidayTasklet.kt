@@ -21,15 +21,16 @@ class FetchHolidayTasklet(
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         runWithRetry(contribution.stepExecution) {
             val currentYear = LocalDate.now().year.toString()
-            val response = publicApiServiceImpl
+            publicApiServiceImpl
                 .getHolidayList(currentYear)
                 .execute()
-            response.body()
-                    ?.toDomain()
-                    ?.takeIf { it.isNotEmpty() }
-                    ?.let { items ->
-                        holidayMapper.addHolidays(items)
-                    }
+                .body()
+                ?.also { holidayResponse ->
+                    holidayResponse
+                        .toDomain()
+                        .takeIf { it.isNotEmpty() }
+                        ?.let { holidayMapper.addHolidays(it) }
+                } ?: throw RuntimeException("데이터베이스 응답이 실패했습니다.")
         }
 
         return RepeatStatus.FINISHED

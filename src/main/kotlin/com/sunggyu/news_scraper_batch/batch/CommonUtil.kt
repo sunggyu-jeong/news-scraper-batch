@@ -13,22 +13,23 @@ fun <T> runWithRetry(
     maxRetries: Int = 3,
     delayMillis: Long = 5000L,
     block: () -> T): T? {
-    var attempt = 0
-    while (attempt < maxRetries) {
-        attempt++
+    repeat(maxRetries - 1) { attempt ->
         try {
             return block()
-        } catch(e: Exception) {
-            println("요청 실패 (시도 횟수: $attempt) (오류 메세지: ${e.message}")
-            if (attempt == maxRetries) {
-                stepExecution.status = BatchStatus.FAILED
-                stepExecution.exitStatus = org.springframework.batch.core.ExitStatus.FAILED
-                return null
-            }
+        } catch (e: Exception) {
+            println("요청 실패 (시도 횟수: $attempt)")
             Thread.sleep(delayMillis)
         }
     }
-    return null
+    return try {
+        block()
+    } catch(e: Exception) {
+        println("마지막 시도 실패 (시도 횟수: $maxRetries) (오류 메세지: ${e.message})")
+        stepExecution.status = BatchStatus.FAILED
+        stepExecution.addFailureException(e)
+
+        throw e
+    }
 }
 
 fun getPastDate(daysAgo: Long = 1): String {
