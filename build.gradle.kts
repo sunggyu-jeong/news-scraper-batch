@@ -41,6 +41,7 @@ dependencies {
 	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 	implementation("com.squareup.okhttp3:logging-interceptor:3.14.9")
 	implementation("org.springframework.boot:spring-boot-starter-web-services")
+	implementation("org.springframework.boot:spring-boot-starter-actuator")
 
 	runtimeOnly("com.mysql:mysql-connector-j")
 
