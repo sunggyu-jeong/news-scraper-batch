@@ -1,6 +1,5 @@
 package com.sunggyu.news_scraper_batch
 
-import io.github.cdimascio.dotenv.Dotenv
 import org.mybatis.spring.annotation.MapperScan
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -13,11 +12,6 @@ import org.springframework.scheduling.annotation.EnableScheduling
 class NewsScraperBatchApplication
 
 fun main(args: Array<String>) {
-	val dotenv = Dotenv.load()
-	System.setProperty("DATABASE_URL", dotenv["DATABASE_URL"] ?: "")
-	System.setProperty("POSTGRES_USER", dotenv["POSTGRES_USER"] ?: "postgres")
-	System.setProperty("POSTGRES_PASSWORD", dotenv["POSTGRES_PASSWORD"] ?: "")
-
 	val context = runApplication<NewsScraperBatchApplication>(*args)
 	val env: Environment = context.environment
 
