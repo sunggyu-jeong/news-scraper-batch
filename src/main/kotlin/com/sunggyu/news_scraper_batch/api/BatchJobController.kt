@@ -4,8 +4,8 @@ import com.sunggyu.news_scraper_batch.batch.scheduler.BatchScheduler
 import kotlinx.coroutines.runBlocking
 import org.springframework.batch.core.Job
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -21,8 +21,8 @@ class BatchJobController(
         PublicBatchJob("publicBatchJob")
     }
 
-    @GetMapping("/manual/run/{jobName}")
-    fun runManualJob(@PathVariable jobName: String): ResponseEntity<String> {
+    @PostMapping("/manual/run")
+    fun runManualJob(@RequestBody jobName: String): ResponseEntity<String> {
         val validJob = BatchJobName.entries.find { it.value == jobName } ?: throw IllegalArgumentException("유효하지 않은 접근입니다.: $jobName")
         runBlocking {
             when (validJob) {

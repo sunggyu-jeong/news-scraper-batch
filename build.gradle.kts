@@ -40,6 +40,7 @@ dependencies {
 	implementation("org.json:json:20250107")
 	implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
 	implementation("com.squareup.okhttp3:logging-interceptor:3.14.9")
+	implementation("org.springframework.boot:spring-boot-starter-web-services")
 
 	runtimeOnly("com.mysql:mysql-connector-j")
 
