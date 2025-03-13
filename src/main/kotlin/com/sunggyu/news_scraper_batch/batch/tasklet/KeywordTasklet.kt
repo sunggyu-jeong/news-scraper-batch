@@ -16,14 +16,16 @@ class KeywordTasklet(
 ): Tasklet {
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         runWithRetry(contribution.stepExecution) {
-            val keywordResponse = apiServiceImpl
-                                    .getKeywordList()
-                                    .execute()
-            println(">>>>>>>>>>>>>>>>>>>>>>>>>> 검색어 조회 성공 $keywordResponse")
-            keywordResponse.body()?.data?.let { keyword ->
-                val jobExecutionContext = chunkContext.stepContext.stepExecution.jobExecution.executionContext
-                jobExecutionContext.putString("queries", keyword.joinToString(",") { it.keyword })
-            }
+            apiServiceImpl
+                .getKeywordList()
+                .execute()
+                .body()
+                ?.data
+                ?.also { keywords ->
+                    println(">>>>>>>>>>>>>>>>>>>>>>>>>> 검색어 조회 성공 ${keywords}")
+                    val jobExecutionContext = chunkContext.stepContext.stepExecution.jobExecution.executionContext
+                    jobExecutionContext.putString("queries", keywords.joinToString(",") { it.keyword })
+                } ?: throw RuntimeException(">>>>>>>>>>>>>>>>>>>>>>>>>> API 요청이 실패 했습니다.")
         }
         return RepeatStatus.FINISHED
     }

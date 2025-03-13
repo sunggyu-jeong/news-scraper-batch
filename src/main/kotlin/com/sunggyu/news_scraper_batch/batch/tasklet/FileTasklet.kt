@@ -43,15 +43,15 @@ class FileTasklet(
 
             val automailUsers = apiServiceImpl.getAutomailUsers()
                                                 .execute()
-                                                .body()?.data
+                                                .body()?.data ?: throw RuntimeException("API 요청 실패")
             val toUsers = automailUsers
-                            ?.filter { it.recipientType == "TO" }
-                            ?.map { it.email }
-                            ?.toTypedArray()
+                            .filter { it.recipientType == "TO" }
+                            .map { it.email }
+                            .toTypedArray()
             val ccUsers = automailUsers
-                            ?.filter { it.recipientType == "CC" }
-                            ?.map { it.email }
-                            ?.toTypedArray()
+                            .filter { it.recipientType == "CC" }
+                            .map { it.email }
+                            .toTypedArray()
 
             emailService.sendEmail(
                 to = toUsers,

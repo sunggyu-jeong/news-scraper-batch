@@ -25,14 +25,17 @@ class NewsSearchTasklet(
             val queries = jobExecutionContext.get("queries") as String
             val consecutiveHolidays = jobExecutionContext.get("consecutiveHolidays") as LocalDate
             val endDate = getPastDate(0)
-            val newsList = apiServiceImpl
-                            .getNews(queries,
-                                     consecutiveHolidays.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
-                                     endDate)
-                            .execute()
-                            .body()
-            val jsonString = Gson().toJson(newsList?.data)
-            jobExecutionContext.put("newsList", jsonString)
+            apiServiceImpl
+                .getNews(queries,
+                         consecutiveHolidays.format(DateTimeFormatter.ofPattern("yyyy.MM.dd")),
+                         endDate)
+                .execute()
+                .body()
+                ?.data.also {
+                    val jsonString = Gson().toJson(it)
+                    jobExecutionContext.put("newsList", jsonString)
+                } ?: throw RuntimeException(">>>>>>>>>>>>>>>>>>>>>>>>>> API 요청이 실패 했습니다.")
+
         }
         return RepeatStatus.FINISHED
     }
