@@ -42,6 +42,7 @@ dependencies {
 	implementation("com.squareup.okhttp3:logging-interceptor:3.14.9")
 	implementation("org.springframework.boot:spring-boot-starter-web-services")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
+	implementation("io.github.cdimascio:java-dotenv:5.2.2")
 
 	runtimeOnly("com.mysql:mysql-connector-j")
 
