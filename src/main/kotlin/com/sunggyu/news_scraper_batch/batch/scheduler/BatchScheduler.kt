@@ -6,6 +6,7 @@ import kotlinx.coroutines.withContext
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
+import org.springframework.batch.core.JobParametersBuilder
 import org.springframework.batch.core.launch.JobLauncher
 import org.springframework.batch.core.launch.JobOperator
 import org.springframework.scheduling.annotation.Scheduled
@@ -26,10 +27,18 @@ class BatchScheduler(
         if (runningExecutions.isNotEmpty()) {
             runningExecutions.forEach { executionId ->
                 try {
-                    jobOperator.abandon(executionId)
-                    logger.info("배치 JOB 강제종료")
+                    // 실행 중인 잡 종료 요청
+                    jobOperator.stop(executionId)
+                    logger.info("배치 JOB 종료 요청")
                 } catch (e: Exception) {
-                    logger.error("배치 JOB 강제종료 실패 ${e.message}")
+                    logger.error("배치 JOB 종료 요청 실패: ${e.message}")
+                    try {
+                        // stop() 실패 시 abandon()으로 강제 종료 시도
+                        jobOperator.abandon(executionId)
+                        logger.info("배치 JOB 강제종료 (abandon) 요청")
+                    } catch (ex: Exception) {
+                        logger.error("배치 JOB 강제종료 (abandon) 실패: ${ex.message}")
+                    }
                 }
             }
             withContext(Dispatchers.IO) {
@@ -37,7 +46,11 @@ class BatchScheduler(
             }
         }
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $startMessage: ${LocalDateTime.now()}")
-        jobLauncher.run(job, org.springframework.batch.core.JobParameters())
+
+        val jobParameters = JobParametersBuilder()
+            .addLong("run.id", System.currentTimeMillis())
+            .toJobParameters()
+        jobLauncher.run(job, jobParameters)
         println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> $endMessage: ${LocalDateTime.now()}")
     }
 
