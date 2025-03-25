@@ -59,7 +59,7 @@ class BatchScheduler(
         executeJob("newsBatchJob", newsBatchJob, "뉴스 배치 실행 시작", "뉴스 배치 실행 완료")
     }
 
-    @Scheduled(cron = "0 0 0 1 * *", zone = "Asia/Seoul")
+    @Scheduled(cron = "0 0 0 */5 * *", zone = "Asia/Seoul")
     fun runBatchHolidayJob() = runBlocking {
         executeJob("publicBatchJob", publicBatchJob, "공공API 배치 실행 시작", "공공API 배치 실행 완료")
     }
