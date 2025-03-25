@@ -1,6 +1,6 @@
 # ![Image](https://github.com/user-attachments/assets/cbe42540-59af-4e8d-8f59-eb22f0159870)
 
-**Spring Boot** 기반 배치 애플리케이션으로, **Spring Batch**, **Kotlin**, 그리고 **PostgreSQL** 데이터베이스를 사용하여 뉴스 스크래핑 및 공휴일 데이터 처리
+**Spring Boot** 기반 배치 애플리케이션으로, **Spring Batch**, **Kotlin**, **PostgreSQL** 을 사용하여 뉴스 스크래핑 및 공휴일 데이터 처리
 
 ## 기술 스택
 
