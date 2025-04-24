@@ -21,6 +21,7 @@ class FetchHolidayTasklet(
     override fun execute(contribution: StepContribution, chunkContext: ChunkContext): RepeatStatus? {
         runWithRetry(contribution.stepExecution) {
             val currentYear = LocalDate.now().year.toString()
+
             publicApiServiceImpl
                 .getHolidayList(currentYear)
                 .execute()
