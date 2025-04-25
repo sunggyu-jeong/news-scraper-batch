@@ -1,40 +1,29 @@
-name: Railway Service Schedule
+# .github/workflows/railway-flap.yml
+name: Railway Service Flapping
 
 on:
   schedule:
-    # UTC 00:00 → KST 09:00, 월~금에만 서비스 시작
-    - cron: '0 0 * * 1-5'
-    # UTC 10:00 → KST 19:00, 월~금에만 서비스 종료
-    - cron: '0 10 * * 1-5'
+    # 매 5분마다 실행
+    - cron: '*/5 * * * *'
 
 jobs:
   control:
     runs-on: ubuntu-latest
+    env:
+      RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+      PROJECT_ID:        ${{ secrets.RAILWAY_PROJECT_ID }}
+      SERVICE_IDS:       ${{ secrets.RAILWAY_SERVICE_IDS }}  # "svc1,svc2,svc3" 형태
+
     steps:
       - name: Railway CLI 설치
         run: npm install -g @railway/cli
 
-      - name: 로그인 (토큰 사용)
-        env:
-          RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-        run: railway login --token $RAILWAY_API_TOKEN
-
-      - name: 서비스 켜기/끄기
-        env:
-          PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
-          SERVICE_ID: ${{ secrets.RAILWAY_SERVICE_ID }}
+      - name: 서비스 플랩(끄고→켜기)
         run: |
-         HOUR=$(date +'%H')
-          echo "현재 시간(UTC): $HOUR"
-          # SERVICE_IDS 는 "svc1,svc2,svc3" 과 같이 세팅
-          IFS=',' read -r -a SERVICES <<< "$SERVICE_IDS"
-          for SERVICE_ID in "${SERVICES[@]}"; do
-            if [[ "$HOUR" == "00" ]]; then
-              echo "▶ 서비스 시작: $SERVICE_ID"
-              railway up --project $PROJECT_ID --service $SERVICE_ID --detach
-            else
-              echo "▶ 서비스 종료: $SERVICE_ID"
-              railway stop --project $PROJECT_ID --service $SERVICE_ID
-            fi
+          # Railway CLI는 RAILWAY_API_TOKEN 환경변수로 인증
+          for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
+            echo "▶ 서비스 중지: $SERVICE_ID"
+            railway stop --project $PROJECT_ID --service $SERVICE_ID || true
+            echo "▶ 서비스 시작: $SERVICE_ID"
+            railway up   --project $PROJECT_ID --service $SERVICE_ID --detach
           done
-
