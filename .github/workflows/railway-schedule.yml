@@ -1,18 +1,19 @@
 name: Railway Service Schedule
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'   # KST 09:00
-    - cron: '0 2 * * *'  # KST 11:00
+    - cron: '0 0 * * *'   # UTC 00:00 → KST 09:00
+    - cron: '0 2 * * *'   # UTC 02:00 → KST 11:00
 
 jobs:
   control:
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_PROJECT_TOKEN }}
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
       PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
-      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}  # "svc1,svc2,svc3" 형태
+      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
 
     steps:
       - uses: actions/checkout@v3
@@ -24,7 +25,7 @@ jobs:
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
             if [ "$HOUR" = "00" ]; then
               echo "▶ 서비스 시작: $SERVICE_ID"
-              railway link -p $PROJECT_ID -s $SERVICE_ID 
+              railway link -p $PROJECT_ID -s $SERVICE_ID
               railway up --service $SERVICE_ID --yes
             elif [ "$HOUR" = "02" ]; then
               echo "▶ 서비스 중지: $SERVICE_ID"
@@ -35,17 +36,22 @@ jobs:
             fi
           done
 
+  test-stop:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    container: ghcr.io/railwayapp/cli:latest
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+      PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
+      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
+
     steps:
       - uses: actions/checkout@v3
 
-      - name: Deploy All Services
+      - name: Deploy to Railway
         run: |
-          # 디버깅용: 토큰이 잘 넘어오는지(안 민감한 값인 앞/뒤 4글자만)
-          echo "Token head: ${RAILWAY_TOKEN:0:4}…, tail: ${RAILWAY_TOKEN: -4}"
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
-            echo "▶ Deploying service: $SERVICE_ID"
-            # 프로젝트와 서비스 연결 (환경은 기본 production)
+            echo "▶ 테스트 종료: $SERVICE_ID"
             railway link -p $PROJECT_ID -s $SERVICE_ID
-            # 실제 업로드/배포
             railway up --service $SERVICE_ID --yes
           done
