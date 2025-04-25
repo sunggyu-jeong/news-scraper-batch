@@ -24,11 +24,11 @@ jobs:
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
             if [ "$HOUR" = "00" ]; then
               echo "▶ 서비스 시작: $SERVICE_ID"
-              railway link -p $PROJECT_ID -s $SERVICE_ID --yes
+              railway link -p $PROJECT_ID -s $SERVICE_ID
               railway up --detach
             elif [ "$HOUR" = "10" ]; then
               echo "▶ 서비스 중지: $SERVICE_ID"
-              railway link -p $PROJECT_ID -s $SERVICE_ID --yes
+              railway link -p $PROJECT_ID -s $SERVICE_ID
               railway down --yes || true
             else
               echo "스케줄 외 시간입니다: $HOUR, 작업을 수행하지 않습니다."
@@ -50,6 +50,6 @@ jobs:
         run: |
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
             echo "▶ 서비스 시작: $SERVICE_ID"
-            railway link -p $PROJECT_ID -s $SERVICE_ID --yes
-            railway redeploy
+            railway link -p $PROJECT_ID -s $SERVICE_ID 
+            railway redeploy --yes
           done
