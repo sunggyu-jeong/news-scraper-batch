@@ -45,8 +45,6 @@ jobs:
     steps:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
-      - name: Railway 로그인 (CI 모드)
-        run: railway login --ci
 
       - name: Test Stop Services
         run: |
