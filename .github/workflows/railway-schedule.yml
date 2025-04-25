@@ -40,16 +40,16 @@ jobs:
     runs-on: ubuntu-latest
     container: ghcr.io/railwayapp/cli:latest
     env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_PROJECT_TOKEN }}
-      PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
-      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
+      RAILWAY_TOKEN:     ${{ secrets.RAILWAY_PROJECT_TOKEN }}
+      PROJECT_ID:        ${{ secrets.RAILWAY_PROJECT_ID }}
+      SERVICE_ID:        ${{ secrets.RAILWAY_SERVICE_ID }}
     steps:
       - uses: actions/checkout@v3
         
-      - name: Test Stop Services
-        run: |
-          for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
-            echo "▶ 서비스 시작: $SERVICE_ID"
-            railway link -p $PROJECT_ID -s $SERVICE_ID 
-            railway up --service $SERVICE_ID --yes
-          done
+      - run: npm i -g @railway/cli
+
+      - name: Link Railway project
+        run: railway link -p $PROJECT_ID -s $SERVICE_ID
+
+      - name: Deploy to Railway
+        run: railway up --service $SERVICE_ID --yes
