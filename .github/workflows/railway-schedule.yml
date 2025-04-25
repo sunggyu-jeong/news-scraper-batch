@@ -49,5 +49,10 @@ jobs:
       - name: Link Railway project
         run: railway link -p $PROJECT_ID -s $SERVICE_ID
 
-      - name: Deploy to Railway
-        run: railway up --service $SERVICE_ID --yes
+    - name: Deploy to Railway
+      run: |
+        for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
+          echo "▶ 테스트 종료: $SERVICE_ID"
+          railway link -p $PROJECT_ID -s $SERVICE_ID
+          railway up --service $SERVICE_ID --yes
+        done
