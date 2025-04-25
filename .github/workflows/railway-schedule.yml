@@ -1,5 +1,4 @@
-# .github/workflows/railway-flap.yml
-name: Railway Service Flapping
+name: Railway Service Schedule
 
 on:
   schedule:
