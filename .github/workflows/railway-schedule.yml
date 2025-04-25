@@ -51,5 +51,5 @@ jobs:
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
             echo "▶ 서비스 시작: $SERVICE_ID"
             railway link -p $PROJECT_ID -s $SERVICE_ID 
-            railway up --detach -- --yes
+            railway up --detach
           done
