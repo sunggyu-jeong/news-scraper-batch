@@ -44,7 +44,7 @@ jobs:
       SERVICE_IDS:       ${{ secrets.RAILWAY_SERVICE_IDS }}
     steps:
       - name: Install Railway CLI
-        run: npm install -g @railway/cli
+        run: npm install -g @railway/cli@3.14.0
 
       - name: Test Stop Services
         run: |
