@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "Deploying Railway services: $SERVICE_IDS"
           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
-            echo "▶ 서비스 배포: $SERVICE_ID"
+            echo "▶ 서비스 재배포: $SERVICE_ID"
             railway link -p $PROJECT_ID -s $SERVICE_ID
-            railway up --service $SERVICE_ID --yes
+            railway redeploy --service $SERVICE_ID --yes
           done
