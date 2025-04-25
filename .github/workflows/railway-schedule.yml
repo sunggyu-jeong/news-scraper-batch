@@ -12,7 +12,7 @@ jobs:
     container:
       image: ghcr.io/railwayapp/cli:latest
     env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+      RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
       PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
       SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
     steps:
@@ -25,7 +25,7 @@ jobs:
             if [ "$HOUR" = "00" ]; then
               echo "▶ 서비스 시작: $SERVICE_ID"
               railway link -p $PROJECT_ID -s $SERVICE_ID
-              railway up --service $SERVICE_ID --yes
+              railway redeploy --service $SERVICE_ID --yes
             elif [ "$HOUR" = "02" ]; then
               echo "▶ 서비스 중지: $SERVICE_ID"
               railway link -p $PROJECT_ID -s $SERVICE_ID
@@ -40,7 +40,7 @@ jobs:
     container:
       image: ghcr.io/railwayapp/cli:latest
     env:
-      RAILWAY_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+      RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
       PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
       SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
     steps:
