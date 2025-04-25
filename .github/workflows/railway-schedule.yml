@@ -17,6 +17,9 @@ jobs:
       - name: Railway CLI 설치
         run: npm install -g @railway/cli
 
+      - name: Railway CLI 로그인
+        run: echo "$RAILWAY_TOKEN" | railway login --browserless
+
       - name: 서비스 플랩(끄고→켜기)
         run: |
           HOUR=$(date +'%H')
@@ -45,6 +48,9 @@ jobs:
     steps:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
+        
+      - name: Railway CLI 로그인
+        run: echo "$RAILWAY_TOKEN" | railway login --browserless
 
       - name: Test Stop Services
         run: |
