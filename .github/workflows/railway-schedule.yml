@@ -1,55 +1,55 @@
-name: Railway Service Schedule
+# name: Railway Service Schedule
 
-on:
-  workflow_dispatch: {}
-  schedule:
-    - cron: '0 0 * * *'   # UTC 00:00 → KST 09:00
-    - cron: '0 2 * * *'   # UTC 02:00 → KST 11:00
+# on:
+#   workflow_dispatch: {}
+#   schedule:
+#     - cron: '0 0 * * *'   # UTC 00:00 → KST 09:00
+#     - cron: '0 2 * * *'   # UTC 02:00 → KST 11:00
 
-jobs:
-  control:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/railwayapp/cli:latest
-    env:
-      RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-      PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
-      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: 서비스 플랩(끄고→켜기)
-        run: |
-          HOUR=$(date +'%H')
-          echo "현재 UTC 시간: $HOUR"
-          for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
-            if [ "$HOUR" = "00" ]; then
-              echo "▶ 서비스 시작: $SERVICE_ID"
-              railway link -p $PROJECT_ID -s $SERVICE_ID
-              railway redeploy --service $SERVICE_ID --yes
-            elif [ "$HOUR" = "02" ]; then
-              echo "▶ 서비스 중지: $SERVICE_ID"
-              railway link -p $PROJECT_ID -s $SERVICE_ID
-              railway down --yes || true
-            else
-              echo "스케줄 외 시간입니다: $HOUR, 작업을 수행하지 않습니다."
-            fi
-          done
+# jobs:
+#   control:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: ghcr.io/railwayapp/cli:latest
+#     env:
+#       RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+#       PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
+#       SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: 서비스 플랩(끄고→켜기)
+#         run: |
+#           HOUR=$(date +'%H')
+#           echo "현재 UTC 시간: $HOUR"
+#           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
+#             if [ "$HOUR" = "00" ]; then
+#               echo "▶ 서비스 시작: $SERVICE_ID"
+#               railway link -p $PROJECT_ID -s $SERVICE_ID
+#               railway redeploy --service $SERVICE_ID --yes
+#             elif [ "$HOUR" = "02" ]; then
+#               echo "▶ 서비스 중지: $SERVICE_ID"
+#               railway link -p $PROJECT_ID -s $SERVICE_ID
+#               railway down --yes || true
+#             else
+#               echo "스케줄 외 시간입니다: $HOUR, 작업을 수행하지 않습니다."
+#             fi
+#           done
 
-  railway-deploy:
-    runs-on: ubuntu-latest
-    container:
-      image: ghcr.io/railwayapp/cli:latest
-    env:
-      RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
-      PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
-      SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
-    steps:
-      - uses: actions/checkout@v3
-      - name: Deploy Railway Services
-        run: |
-          echo "Deploying Railway services: $SERVICE_IDS"
-          for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
-            echo "▶ 서비스 재배포: $SERVICE_ID"
-            railway link -p $PROJECT_ID -s $SERVICE_ID
-            railway redeploy --service $SERVICE_ID --yes
-          done
+#   railway-deploy:
+#     runs-on: ubuntu-latest
+#     container:
+#       image: ghcr.io/railwayapp/cli:latest
+#     env:
+#       RAILWAY_API_TOKEN: ${{ secrets.RAILWAY_API_TOKEN }}
+#       PROJECT_ID:    ${{ secrets.RAILWAY_PROJECT_ID }}
+#       SERVICE_IDS:   ${{ secrets.RAILWAY_SERVICE_IDS }}
+#     steps:
+#       - uses: actions/checkout@v3
+#       - name: Deploy Railway Services
+#         run: |
+#           echo "Deploying Railway services: $SERVICE_IDS"
+#           for SERVICE_ID in $(echo $SERVICE_IDS | tr ',' ' '); do
+#             echo "▶ 서비스 재배포: $SERVICE_ID"
+#             railway link -p $PROJECT_ID -s $SERVICE_ID
+#             railway redeploy --service $SERVICE_ID --yes
+#           done
