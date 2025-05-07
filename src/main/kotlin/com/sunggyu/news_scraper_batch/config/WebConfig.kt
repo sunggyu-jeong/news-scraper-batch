@@ -8,7 +8,7 @@ class WebConfig : WebMvcConfigurer {
     registry
       .addMapping("/**")                              
       .allowedOriginPatterns("http://localhost:8080", "https://news-scraper.pages.dev")
-      .allowedMethods("GET", "POST", "PUT", "DELETE") 
+      .allowedMethods("*") 
       .allowedHeaders("*")                            
       .allowCredentials(true)                         
       .maxAge(3600)                                   
