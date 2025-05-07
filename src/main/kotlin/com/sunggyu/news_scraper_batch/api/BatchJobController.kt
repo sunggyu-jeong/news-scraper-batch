@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/batchjob")
+@CrossOrigin(origins = ["http://localhost:8080", "https://news-scraper.pages.dev"])
 class BatchJobController(
     private val batchScheduler: BatchScheduler,
     private val newsBatchJob: Job,
