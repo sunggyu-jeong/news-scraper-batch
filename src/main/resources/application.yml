@@ -1,4 +1,9 @@
+server:
+  port: 4000
+
 spring:
+  main:
+    web-application-type: servlet
   datasource:
     url: ${SPRING_DATASOURCE_PASSWORD}
     username: ${SPRING_DATASOURCE_USERNAME}
