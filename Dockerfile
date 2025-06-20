@@ -1,11 +1,17 @@
 # Stage 1: Gradle 빌드를 위한 단계
 FROM gradle:7.6-jdk17 AS build
 WORKDIR /app
-# 모든 소스 코드를 복사하여 빌드 환경 구성
+# 캐시 활용용: Gradle Wrapper와 빌드 스크립트만 복사
+COPY build.gradle settings.gradle gradlew ./
+COPY gradle gradle
+
+# 의존성만 미리 다운로드 (Docker layer 캐시)
+RUN chmod +x gradlew && ./gradlew dependencies --no-daemon --configure-on-demand
+
+# 전체 소스 복사 후 실제 빌드
 COPY . .
-# gradlew를 이용해 빌드 실행 (snapshot JAR 생성)
-# 환경변수는 테스트과정에서 실행될 수 없으므로 테스트는 생략한다.
-RUN ./gradlew build -x test
+
+RUN ./gradlew build -x test --no-daemon --configure-on-demand
 
 # Stage 2: 실행 환경 설정
 FROM eclipse-temurin:17-jdk
