@@ -2,7 +2,7 @@
 FROM gradle:7.6-jdk17 AS build
 WORKDIR /app
 # 캐시 활용용: Gradle Wrapper와 빌드 스크립트만 복사
-COPY build.gradle settings.gradle.kts gradlew ./
+COPY build.gradle.kts settings.gradle.kts gradlew ./
 COPY gradle gradle
 
 # 의존성만 미리 다운로드 (Docker layer 캐시)
