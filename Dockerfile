@@ -15,7 +15,9 @@ WORKDIR /app
 RUN apt update && apt install -y tzdata
 ENV TZ=Asia/Seoul
 
+EXPOSE 4000
+
 # 첫 번째 단계에서 생성한 JAR 파일을 복사
 COPY --from=build /app/build/libs/news-scraper-batch-0.0.1-SNAPSHOT.jar app.jar
 # 컨테이너 실행 시 JAR 파일 실행
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dserver.port=4000", "-jar", "app.jar"]
